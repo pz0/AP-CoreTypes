@@ -87,7 +87,6 @@ TEST_CASE("Swap function", "[SWS_CORE], [SWS_CORE_01096]")
     CHECK(*opt_2 == 1);
 }
 
-
 TEST_CASE("make_optional", "[SWS_CORE], [SWS_CORE_01033]")
 {
     ara::core::Optional x = ara::core::make_optional(1);
