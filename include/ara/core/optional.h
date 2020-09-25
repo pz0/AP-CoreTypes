@@ -9,10 +9,22 @@
 #define ARA_CORE_OPTIONAL_H_
 
 #include "ara/core/utility.h"
-#include "ara/core/exception.h"
 #include <optional>
 
 namespace ara::core {
+    /**
+     * @brief indicator of optional type with uninitialized state.
+     */
+    struct nullopt_t
+    {
+        constexpr nullopt_t(int) noexcept {}
+    };
+
+    /**
+     * @brief an object of type nullopt_t.
+     */
+    constexpr nullopt_t nullopt{0};
+
     /**
      * @brief The class template Optional manages an optional contained value.
      * 
@@ -287,7 +299,7 @@ namespace ara::core {
              */
             constexpr T& operator*() &
             {
-                return *o.value;
+                return *o_.value;
             }
 
             /**
@@ -369,28 +381,6 @@ namespace ara::core {
             }
         private:
             std::optional<T> o_;
-    };
-
-    /**
-     * @brief indicator of optional type with uninitialized state.
-     */
-    struct nullopt_t
-    {
-        explicit constexpr nullopt_t(int) {}
-    }
-
-    /**
-     * @brief an object of type nullopt_t.
-     */
-    constexpr nullopt_t nullopt{};
-
-    /**
-     * @brief exception indicating checked access to an optional that doesn't contain a value.
-     */
-    class bad_optional_access : public Exception 
-    {
-        public:
-            bad_optional_access();
     };
 
     /**
@@ -529,7 +519,7 @@ namespace ara::core {
      * @return Returns !opt.
      */
     template <class T>
-    constexpr bool operator==(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator==(const Optional<T>& opt, nullopt_t) noexcept
     {
         return !bool(opt);
     }
@@ -544,7 +534,7 @@ namespace ara::core {
      * @return Returns !opt.
      */
     template <class T>
-    constexpr bool operator==(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator==(nullopt_t, const Optional<T>& opt) noexcept
     {
         return !bool(opt);
     }
@@ -559,7 +549,7 @@ namespace ara::core {
      * @return Returns bool(opt).
      */
     template <class T>
-    constexpr bool operator!=(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator!=(const Optional<T>& opt, nullopt_t) noexcept
     {
         return bool(opt);
     }
@@ -574,7 +564,7 @@ namespace ara::core {
      * @return Returns bool(opt).
      */
     template <class T>
-    constexpr bool operator!=(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator!=(nullopt_t, const Optional<T>& opt) noexcept
     {
         return bool(opt);
     }
@@ -589,7 +579,7 @@ namespace ara::core {
      * @return Returns false.
      */
     template <class T>
-    constexpr bool operator<(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator<(const Optional<T>& opt, nullopt_t) noexcept
     {
         return false;
     }
@@ -604,7 +594,7 @@ namespace ara::core {
      * @return Returns bool(opt).
      */
     template <class T>
-    constexpr bool operator<(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator<(nullopt_t, const Optional<T>& opt) noexcept
     {
         return bool(opt);
     }
@@ -619,7 +609,7 @@ namespace ara::core {
      * @return Returns !opt.
      */
     template <class T>
-    constexpr bool operator<=(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator<=(const Optional<T>& opt, nullopt_t) noexcept
     {
         return !bool(opt);
     }
@@ -634,7 +624,7 @@ namespace ara::core {
      * @return Returns true.
      */
     template <class T>
-    constexpr bool operator<=(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator<=(nullopt_t, const Optional<T>& opt) noexcept
     {
         return true;
     }
@@ -649,7 +639,7 @@ namespace ara::core {
      * @return Returns bool(opt).
      */
     template <class T>
-    constexpr bool operator>(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator>(const Optional<T>& opt, nullopt_t) noexcept
     {
         return bool(opt);
     }
@@ -664,7 +654,7 @@ namespace ara::core {
      * @return Returns false.
      */
     template <class T>
-    constexpr bool operator>(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator>(nullopt_t, const Optional<T>& opt) noexcept
     {
         return false;
     }
@@ -679,7 +669,7 @@ namespace ara::core {
      * @return Returns true.
      */
     template <class T>
-    constexpr bool operator>=(const optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator>=(const Optional<T>& opt, nullopt_t) noexcept
     {
         return true;
     }
@@ -694,7 +684,7 @@ namespace ara::core {
      * @return Returns !opt.
      */
     template <class T>
-    constexpr bool operator>=(nullopt_t, const optional<T>& opt) noexcept
+    constexpr bool operator>=(nullopt_t, const Optional<T>& opt) noexcept
     {
         return !bool(opt);
     }
@@ -711,7 +701,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt == value : false.
      */
     template <class T, class U>
-    constexpr bool operator==(const optional<T>& opt, const U& value)
+    constexpr bool operator==(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt == value : false;
     }
@@ -728,7 +718,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value == *opt : false.
      */
     template <class T, class U>
-    constexpr bool operator==(const U& value, const optional<T>& opt)
+    constexpr bool operator==(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value == *opt : false;
     }
@@ -745,7 +735,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt != value : true.
      */
     template <class T, class U>
-    constexpr bool operator!=(const optional<T>& opt, const U& value)
+    constexpr bool operator!=(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt != value : true;
     }
@@ -762,7 +752,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value != *opt : true.
      */
     template <class T, class U>
-    constexpr bool operator!=(const U& value, const optional<T>& opt)
+    constexpr bool operator!=(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value != *opt : true;
     }
@@ -779,7 +769,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt < value  : true.
      */
     template <class T, class U>
-    constexpr bool operator<(const optional<T>& opt, const U& value)
+    constexpr bool operator<(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt < value  : true;
     }
@@ -796,7 +786,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value < *opt  : false.
      */
     template <class T, class U>
-    constexpr bool operator<(const U& value, const optional<T>& opt)
+    constexpr bool operator<(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value < *opt  : false;
     }
@@ -813,7 +803,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt <= value : true.
      */
     template <class T, class U>
-    constexpr bool operator<=(const optional<T>& opt, const U& value)
+    constexpr bool operator<=(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt <= value : true;
     }
@@ -830,7 +820,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value <= *opt : false.
      */
     template <class T, class U>
-    constexpr bool operator<=(const U& value, const optional<T>& opt)
+    constexpr bool operator<=(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value <= *opt : false;
     }
@@ -847,7 +837,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt > value  : false.
      */
     template <class T, class U>
-    constexpr bool operator>(const optional<T>& opt, const U& value)
+    constexpr bool operator>(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt > value  : false;
     }
@@ -864,7 +854,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value > *opt  : true.
      */
     template <class T, class U>
-    constexpr bool operator>(const U& value, const optional<T>& opt)
+    constexpr bool operator>(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value > *opt  : true;
     }
@@ -881,7 +871,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? *opt >= value : false.
      */
     template <class T, class U>
-    constexpr bool operator>=(const optional<T>& opt, const U& value)
+    constexpr bool operator>=(const Optional<T>& opt, const U& value)
     {
         return bool(opt) ? *opt >= value : false;
     }
@@ -898,7 +888,7 @@ namespace ara::core {
      * @return Returns bool(opt) ? value >= *opt : true.
      */
     template <class T, class U>
-    constexpr bool operator>=(const U& value, const optional<T>& opt)
+    constexpr bool operator>=(const U& value, const Optional<T>& opt)
     {
         return bool(opt) ? value >= *opt : true;
     }
