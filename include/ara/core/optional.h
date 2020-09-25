@@ -31,6 +31,14 @@ namespace ara::core {
      * @tparam T the type of the value to manage initialization state for.
      * 
      * @req {SWS_CORE_01033}
+     * The namespace ara::core shall provide a class template Optional.
+     * 
+     * @req {SWS_CORE_01030}
+     * value member function overloads, no member functions with the name exists in ara::core::Optional.
+     * 
+     * @req {SWS_CORE_01031}
+     * No class named bad_optional_access is defined in the ara::core namespace.
+     * 
      */
     template <typename T>
     class Optional
@@ -269,7 +277,7 @@ namespace ara::core {
              */
             constexpr const T* operator->() const
             {
-                return o_.value();
+                return &o_.value();
             }
 
             /**
@@ -279,7 +287,7 @@ namespace ara::core {
              */
             constexpr T* operator->()
             {
-                return o_.value();
+                return &o_.value();
             }
 
             /**
@@ -289,7 +297,7 @@ namespace ara::core {
              */
             constexpr const T& operator*() const&
             {
-                return *o_.value;
+                return *o_;
             }
 
             /**
@@ -299,7 +307,7 @@ namespace ara::core {
              */
             constexpr T& operator*() &
             {
-                return *o_.value;
+                return *o_;
             }
 
             /**
@@ -579,7 +587,7 @@ namespace ara::core {
      * @return Returns false.
      */
     template <class T>
-    constexpr bool operator<(const Optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator<(const Optional<T>&, nullopt_t) noexcept
     {
         return false;
     }
@@ -624,7 +632,7 @@ namespace ara::core {
      * @return Returns true.
      */
     template <class T>
-    constexpr bool operator<=(nullopt_t, const Optional<T>& opt) noexcept
+    constexpr bool operator<=(nullopt_t, const Optional<T>&) noexcept
     {
         return true;
     }
@@ -654,7 +662,7 @@ namespace ara::core {
      * @return Returns false.
      */
     template <class T>
-    constexpr bool operator>(nullopt_t, const Optional<T>& opt) noexcept
+    constexpr bool operator>(nullopt_t, const Optional<T>&) noexcept
     {
         return false;
     }
@@ -669,7 +677,7 @@ namespace ara::core {
      * @return Returns true.
      */
     template <class T>
-    constexpr bool operator>=(const Optional<T>& opt, nullopt_t) noexcept
+    constexpr bool operator>=(const Optional<T>&, nullopt_t) noexcept
     {
         return true;
     }
@@ -900,6 +908,8 @@ namespace ara::core {
      * 
      * @param lhs an optional object to swap.
      * @param rhs an optional object to swap.
+     * 
+     * @req {SWS_CORE_01096}
      */
     template <class T>
     void swap(Optional<T>& lhs, Optional<T>& rhs) noexcept
