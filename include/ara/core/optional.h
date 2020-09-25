@@ -20,7 +20,7 @@ namespace ara::core {
      * 
      * @req {SWS_CORE_01033}
      */
-    template <class T>
+    template <typename T>
     class Optional
     {
         public:
@@ -29,12 +29,12 @@ namespace ara::core {
             /**
              * @brief Constructs an object that does not contain a value.
              */
-            constexpr Optional() noexcept : o_() {}
+            constexpr Optional() noexcept = default;
 
             /**
              * @brief Constructs an object that does not contain a value.
              */
-            constexpr Optional(nullopt_t) noexcept : o_(nullopt) {}
+            constexpr Optional(nullopt_t) noexcept : o_(std::nullopt) {}
 
             /**
              * @brief Copy constructor: If other contains a value, 
@@ -45,7 +45,7 @@ namespace ara::core {
              * 
              * @param other another optional object whose contained value is copied.
              */
-            constexpr Optional(const Optional& other) : o_(other) {}
+            constexpr Optional(const Optional& other) : o_(other.o_) {}
 
             /**
              * @brief Move constructor: If other contains a value, 
@@ -69,7 +69,7 @@ namespace ara::core {
              * @param args arguments with which to initialize the contained value.
              */
             template <class... Args>
-            constexpr explicit Optional(in_place_t, Args&&... args) : o_(in_place, std::forward<Args>(args)...) {}
+            constexpr explicit Optional(in_place_t, Args&&... args) : o_(std::in_place, std::forward<Args>(args)...) {}
 
             /**
              * @brief Constructs an optional object that contains a value, 
@@ -83,7 +83,7 @@ namespace ara::core {
              * @param args arguments with which to initialize the contained value.
              */
             template <class U, class... Args>
-            constexpr explicit Optional(in_place_t, initializer_list<U> ilist, Args&&... args) : o_(in_place, ilist, std::forward<Args>(args)...) {}
+            constexpr explicit Optional(in_place_t, std::initializer_list<U> ilist, Args&&... args) : o_(std::in_place, ilist, std::forward<Args>(args)...) {}
 
             /**
              * @brief Constructs an optional object that contains a value, 
@@ -132,7 +132,7 @@ namespace ara::core {
              */
             Optional& operator=(nullopt_t) noexcept
             {
-                o_ = nullopt;
+                o_ = std::nullopt;
                 return *this;
             }
 
@@ -158,7 +158,7 @@ namespace ara::core {
             Optional& operator=(Optional&& other) noexcept
             {
                 if (this != other)
-                    o_ = other.o_;
+                    o_ = std::move(other.o_);
                 return *this;
             }
 
@@ -174,7 +174,7 @@ namespace ara::core {
             template <class U = T> 
             Optional& operator=(U&& value)
             {
-                o_ = value;
+                o_ = std::move(value);
                 return *this;
             }
 
@@ -206,7 +206,7 @@ namespace ara::core {
             template <class U> 
             Optional& operator=(Optional<U>&& other)
             {
-                o_ = other.o_;
+                o_ = std::move(other.o_);
                 return *this;
             }
 
@@ -232,12 +232,12 @@ namespace ara::core {
              * @tparam Args args type.
              * 
              * @param args the arguments to pass to the constructor.
-             * @param initializer_list initializer list to pass to the constructor.
+             * @param ilist initializer list to pass to the constructor.
              * 
              * @return A reference to the new contained value. 
              */
             template <class U, class... Args> 
-            T& emplace(initializer_list<U> ilist, Args&&... args)
+            T& emplace(std::initializer_list<U> ilist, Args&&... args)
             {
                 return o_.emplace(ilist, std::forward<Args>(args)...);
             }
@@ -342,7 +342,7 @@ namespace ara::core {
             template <class U> 
             constexpr T value_or(U&& default_value) const&
             {
-                return o_.value_or(default_value);
+                return o_.value_or(std::move(default_value));
             }
 
             /**
@@ -357,7 +357,7 @@ namespace ara::core {
             template <class U>
             constexpr T value_or(U&& default_value) &&
             {
-                return std::move(o_.value_or(default_value));
+                return std::move(o_.value_or(std::move(default_value)));
             }
 
             /**
@@ -961,7 +961,7 @@ namespace ara::core {
      * @return the constructed optional object.
      */
     template <class T, class U, class... Args>
-    constexpr Optional<T> make_optional(initializer_list<U> il, Args&&... args)
+    constexpr Optional<T> make_optional(std::initializer_list<U> il, Args&&... args)
     {
         return Optional<T>(in_place, il, std::forward<Args>(args)...);
     }
