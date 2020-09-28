@@ -2,8 +2,9 @@
 
 #include "ara/core/optional.h"
 
-TEST_CASE("Optional can be constructed, operators =,->,*,bool, reset, has_value, value_or, comparison operators",
-          "[SWS_CORE], [SWS_CORE_01033]")
+TEST_CASE(
+  "Optional can be constructed, operators =,->,*,bool, reset, has_value, value_or, comparison operators",
+  "[SWS_CORE], [SWS_CORE_01033]")
 {
     constexpr ara::core::Optional<int> o1;
     constexpr ara::core::Optional<int> o2(ara::core::nullopt);
@@ -17,8 +18,9 @@ TEST_CASE("Optional can be constructed, operators =,->,*,bool, reset, has_value,
 
     constexpr ara::core::Optional<int> o5 = o4;
     CHECK(o5 > ara::core::nullopt);
-    
-    typedef struct {
+
+    typedef struct
+    {
         int a = 0;
         int b = 1;
     } test_struct;
@@ -40,7 +42,7 @@ TEST_CASE("Optional can be constructed, operators =,->,*,bool, reset, has_value,
 
     constexpr ara::core::Optional<int> opt_1(1);
     constexpr ara::core::Optional<int> opt_2(2);
-    constexpr int value = 3;
+    constexpr int                      value = 3;
 
     CHECK((opt_1 == opt_2) == false);
     CHECK((opt_1 != opt_2) == true);
